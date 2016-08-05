@@ -1,14 +1,13 @@
-import threading, datetime, sys, signal
+import threading, datetime, sys, signal 
 import CHIP_IO.GPIO as GPIO
-
 #configure list of leds for each variable
-hour_leds = ['XIO-P0','XIO-P1','XIO-P2','XIO-P3','XIO-P4','XIO-P5']
-minute_leds = ['LCD-D10','LCD-D11','LCD-D12','LCD-D13','LCD-D14','LCD-D15']
+hour_leds = ['XIO-P0','LCD-D3','LCD-D4','LCD-D5','LCD-D6','LCD-D7'] 
+minute_leds = ['LCD-D10','LCD-D11','LCD-D12','LCD-D13','LCD-D14','LCD-D15'] 
 second_leds = ['LCD-D18','LCD-D19','LCD-D20','LCD-D21','LCD-D22','LCD-D23']
 
 def configure_pins():
   GPIO.cleanup()
-  for index in range(0,5):
+  for index in range(0,6):
     GPIO.setup(hour_leds[index], GPIO.OUT)
     GPIO.setup(minute_leds[index], GPIO.OUT)
     GPIO.setup(second_leds[index], GPIO.OUT)
@@ -30,7 +29,7 @@ def do_every (interval, worker_func, iterations = 0):
   worker_func ()
 
 #printer time function
-def print_time():
+def print_time(binary_time):
     current_time = datetime.datetime.now().time()
     print str(current_time.hour) + " : " + str(current_time.minute) + " : " + str(current_time.second)
 
@@ -60,12 +59,13 @@ def get_binary_time():
 def update_clock_leds():
     binary_time = get_binary_time()
 
-    print_time()
+    print_time(binary_time)
     #load values into pins
-    for index in range(0,5):
+    for index in range(0,6):
         GPIO.output(hour_leds[index], binary_time["hour"][index])
         GPIO.output(minute_leds[index], binary_time["minute"][index])
         GPIO.output(second_leds[index], binary_time["second"][index])
+        #print "Index: " + str(index) + " Output pin : " + str(second_leds[index]) + " Bit: " + str(binary_time["second"][index])
 
 #MAIN 
 
